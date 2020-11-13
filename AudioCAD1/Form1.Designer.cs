@@ -40,10 +40,12 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
+            this.resetMasterConfToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.dlg_audioLibrary = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.txt_search = new System.Windows.Forms.TextBox();
             this.lbl_search = new System.Windows.Forms.Label();
@@ -51,6 +53,10 @@
             this.rtx_stagement = new System.Windows.Forms.RichTextBox();
             this.lst_select = new System.Windows.Forms.ListBox();
             this.btn_play = new System.Windows.Forms.Button();
+            this.lbl_stringDiff = new System.Windows.Forms.Label();
+            this.lbl_debug = new System.Windows.Forms.Label();
+            this.worker = new System.ComponentModel.BackgroundWorker();
+            this.lbl_status = new System.Windows.Forms.Label();
             this.mnu_main.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -98,6 +104,7 @@
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.Size = new System.Drawing.Size(252, 30);
             this.openToolStripMenuItem.Text = "Open";
+            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
@@ -130,7 +137,9 @@
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.clearToolStripMenuItem});
+            this.clearToolStripMenuItem,
+            this.toolStripMenuItem4,
+            this.resetMasterConfToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(54, 29);
             this.editToolStripMenuItem.Text = "Edit";
@@ -138,9 +147,20 @@
             // clearToolStripMenuItem
             // 
             this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
-            this.clearToolStripMenuItem.Size = new System.Drawing.Size(202, 30);
+            this.clearToolStripMenuItem.Size = new System.Drawing.Size(252, 30);
             this.clearToolStripMenuItem.Text = "Audio Library";
             this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem4
+            // 
+            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(249, 6);
+            // 
+            // resetMasterConfToolStripMenuItem
+            // 
+            this.resetMasterConfToolStripMenuItem.Name = "resetMasterConfToolStripMenuItem";
+            this.resetMasterConfToolStripMenuItem.Size = new System.Drawing.Size(252, 30);
+            this.resetMasterConfToolStripMenuItem.Text = "Reset master conf";
             // 
             // helpToolStripMenuItem
             // 
@@ -154,18 +174,18 @@
             // helpToolStripMenuItem1
             // 
             this.helpToolStripMenuItem1.Name = "helpToolStripMenuItem1";
-            this.helpToolStripMenuItem1.Size = new System.Drawing.Size(146, 30);
+            this.helpToolStripMenuItem1.Size = new System.Drawing.Size(252, 30);
             this.helpToolStripMenuItem1.Text = "Help";
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(146, 30);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(252, 30);
             this.aboutToolStripMenuItem.Text = "About";
             // 
-            // openFileDialog1
+            // dlg_audioLibrary
             // 
-            this.openFileDialog1.FileName = "openFileDialog1";
+            this.dlg_audioLibrary.FileName = "openFileDialog1";
             // 
             // txt_search
             // 
@@ -175,15 +195,17 @@
             this.txt_search.TabIndex = 1;
             this.txt_search.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             this.txt_search.Enter += new System.EventHandler(this.txt_search_Enter);
+            this.txt_search.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txt_search_KeyDown);
             // 
             // lbl_search
             // 
+            this.lbl_search.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.lbl_search.AutoSize = true;
-            this.lbl_search.Location = new System.Drawing.Point(977, 939);
+            this.lbl_search.Location = new System.Drawing.Point(536, 939);
             this.lbl_search.Name = "lbl_search";
-            this.lbl_search.Size = new System.Drawing.Size(77, 20);
+            this.lbl_search.Size = new System.Drawing.Size(144, 20);
             this.lbl_search.TabIndex = 2;
-            this.lbl_search.Text = "SEARCH";
+            this.lbl_search.Text = "Active search start:";
             // 
             // rtx_term_search
             // 
@@ -200,6 +222,7 @@
             this.rtx_stagement.Size = new System.Drawing.Size(1234, 39);
             this.rtx_stagement.TabIndex = 4;
             this.rtx_stagement.Text = "";
+            this.rtx_stagement.TextChanged += new System.EventHandler(this.rtx_stagement_TextChanged);
             // 
             // lst_select
             // 
@@ -220,11 +243,50 @@
             this.btn_play.UseVisualStyleBackColor = true;
             this.btn_play.Click += new System.EventHandler(this.btn_play_Click);
             // 
+            // lbl_stringDiff
+            // 
+            this.lbl_stringDiff.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbl_stringDiff.AutoSize = true;
+            this.lbl_stringDiff.Location = new System.Drawing.Point(12, 939);
+            this.lbl_stringDiff.Name = "lbl_stringDiff";
+            this.lbl_stringDiff.Size = new System.Drawing.Size(100, 20);
+            this.lbl_stringDiff.TabIndex = 7;
+            this.lbl_stringDiff.Text = "Difference: 0";
+            // 
+            // lbl_debug
+            // 
+            this.lbl_debug.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbl_debug.AutoSize = true;
+            this.lbl_debug.Location = new System.Drawing.Point(169, 939);
+            this.lbl_debug.Name = "lbl_debug";
+            this.lbl_debug.Size = new System.Drawing.Size(100, 20);
+            this.lbl_debug.TabIndex = 8;
+            this.lbl_debug.Text = "Difference: 0";
+            // 
+            // worker
+            // 
+            this.worker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.worker_DoWork_1);
+            this.worker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.worker_ProgressChanged);
+            this.worker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.worker_RunWorkerCompleted);
+            // 
+            // lbl_status
+            // 
+            this.lbl_status.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbl_status.AutoSize = true;
+            this.lbl_status.Location = new System.Drawing.Point(1089, 939);
+            this.lbl_status.Name = "lbl_status";
+            this.lbl_status.Size = new System.Drawing.Size(86, 20);
+            this.lbl_status.TabIndex = 9;
+            this.lbl_status.Text = "Status: OK";
+            // 
             // frm_main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1258, 968);
+            this.Controls.Add(this.lbl_status);
+            this.Controls.Add(this.lbl_debug);
+            this.Controls.Add(this.lbl_stringDiff);
             this.Controls.Add(this.btn_play);
             this.Controls.Add(this.lst_select);
             this.Controls.Add(this.rtx_stagement);
@@ -248,7 +310,7 @@
         #endregion
 
         private System.Windows.Forms.MenuStrip mnu_main;
-        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.OpenFileDialog dlg_audioLibrary;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.TextBox txt_search;
         private System.Windows.Forms.Label lbl_search;
@@ -270,6 +332,12 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ListBox lst_select;
         private System.Windows.Forms.Button btn_play;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem4;
+        private System.Windows.Forms.ToolStripMenuItem resetMasterConfToolStripMenuItem;
+        private System.Windows.Forms.Label lbl_stringDiff;
+        private System.Windows.Forms.Label lbl_debug;
+        private System.ComponentModel.BackgroundWorker worker;
+        private System.Windows.Forms.Label lbl_status;
     }
 }
 
