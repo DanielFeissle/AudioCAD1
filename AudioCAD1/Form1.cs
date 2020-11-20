@@ -9,12 +9,14 @@ using System.IO;
 using System.Threading;
 using System.Collections;
 using System.Media;
+using System.Text.RegularExpressions;
 
 namespace AudioCAD1
 {
     public partial class frm_main : Form
     {
-
+        const string progBar = "*";
+        const string errorBar = "E";
         string audioLibraryLocation = "";
 
         string []sf_Name = null;
@@ -87,7 +89,99 @@ namespace AudioCAD1
 
 
 
+        private void txtSuggest()
+        {
+            string[] curWords = txt_search.Text.Split(' ');
+            int ba = txt_search.SelectionStart-1;
+            int whereAreWe = 0;
+            for (int pu=0;pu<txt_search.Text.Length;pu++)
+            {
+                
+                if (txt_search.Text.Substring(pu,1)==" ")
+                {
+                    whereAreWe++;
+                }
+                if (pu == ba)
+                {
+                    //the array position is in the var above
+                    break;
+                }
+            }
+            if (ba<0)
+            {
+                whereAreWe = 0;
+            }
 
+
+
+
+
+
+            lbl_search.Text = "Active array: " + whereAreWe;
+
+
+            lst_select.Items.Clear();
+            // rtx_term_search.Text = "";
+            for (int i = 0; i < sf_Name.Length; i++)
+            {
+                int lastele = sf_Name[i].Split('\\').Length;
+              //  if (priorSpace < txt_search.SelectionStart) //avoid being at the very end or beginign
+                {
+                    string extension = System.IO.Path.GetExtension(sf_Name[i].Split('\\')[lastele - 1]);
+                    string result = sf_Name[i].Split('\\')[lastele - 1].Substring(0, sf_Name[i].Split('\\')[lastele - 1].Length - extension.Length);
+
+ 
+                    if (curWords[whereAreWe]!="")
+                    {
+
+                    
+                    if (result.Contains(curWords[whereAreWe]))
+                    {
+
+
+
+
+
+
+                        //   rtx_term_search.Text = rtx_term_search.Text + sf_Name[i].Split('\\')[lastele - 1] + Environment.NewLine;
+
+                        lst_select.Items.Add(result);
+
+                        //put in our autoselect for closest matching word
+                        for (int z = 0; z < lst_select.Items.Count; z++)
+                        {
+
+                            debugone = curWords[whereAreWe].Substring(priorSpace);
+                            debugtwo = lst_select.Items[z].ToString();
+
+                            stringdif = StringCompare((debugtwo), debugone);
+                            // stringdif =(StringCompare(txt_search.Text.Substring(priorSpace), lst_select.Items[z].ToString()));
+                            if (stringdif > highestDif)
+                            {
+                                highestDif = stringdif;
+                                difIndex = z;
+                            }
+                            lbl_debug.Text = "DebugOne: " + debugone + "   DebugTwo: " + debugtwo + "A VALU" + stringdif;
+                        }
+                    }
+                    }
+                }
+            }
+
+            if (lst_select.Items.Count > 0)
+            {
+
+                //11-11-20 old method was to use the index, but that is extra steps. trying the selected item method
+                lst_select.SelectedIndex = difIndex;
+                lbl_debug.Text = "User Word: " + debugone + " \tBest Match: " + lst_select.SelectedItem.ToString();
+            }
+
+
+
+
+          
+
+        }
 
 
 
@@ -105,105 +199,9 @@ namespace AudioCAD1
             //we want to construct sentences based on spaces
             if (txt_search.Text!="")
             {
-              
-                if (txt_search.Text.Substring(txt_search.Text.Length - 1, 1) == " ")
-                {
-                    lbl_search.Text = "Active search start: " + priorSpace;
-                    priorSpace = txt_search.Text.Length;
-               //     rtx_term_search.Text = "";
-
-                }
-                else
-                {
 
 
- 
-
-                    lbl_search.Text = "Active search start: " + priorSpace;
-
-
-                    lst_select.Items.Clear();
-                   // rtx_term_search.Text = "";
-                    for (int i = 0; i < sf_Name.Length; i++)
-                    {
-                        int lastele = sf_Name[i].Split('\\').Length;
-                        if (priorSpace< txt_search.Text.Length) //avoid being at the very end or beginign
-                        {
-                            string extension = System.IO.Path.GetExtension(sf_Name[i].Split('\\')[lastele - 1]);
-                            string result = sf_Name[i].Split('\\')[lastele - 1].Substring(0, sf_Name[i].Split('\\')[lastele - 1].Length - extension.Length);
-                            if (result.Contains(txt_search.Text.Substring(priorSpace)))
-                            {
-                                //   rtx_term_search.Text = rtx_term_search.Text + sf_Name[i].Split('\\')[lastele - 1] + Environment.NewLine;
-
-                                lst_select.Items.Add(result);
-
-                                //put in our autoselect for closest matching word
-                                for (int z=0;z<lst_select.Items.Count;z++)
-                                {
-
-                                      debugone = txt_search.Text.Substring(priorSpace);
-                                      debugtwo= lst_select.Items[z].ToString();
-                                   
-                                    stringdif = StringCompare((debugtwo), debugone);
-                                    // stringdif =(StringCompare(txt_search.Text.Substring(priorSpace), lst_select.Items[z].ToString()));
-                                    if (stringdif>highestDif)
-                                    {
-                                        highestDif = stringdif;
-                                        difIndex = z;
-                                    }
-                                    lbl_debug.Text = "DebugOne: " + debugone + "   DebugTwo: " + debugtwo  + "A VALU"+stringdif;
-                                }
-
-                            }
-                        }
-                        else //backspace detected
-                        {
-                            for (int z=txt_search.Text.Length-1;z>0;z--)
-                            {
-                                //get the space furthest back and reset
-                                string haha = txt_search.Text.Substring(z,1);
-                                if (haha==" ")
-                                {
-                                    priorSpace = z+1;
-                                    i = 0; // research
-                                    break;
-                                }
-                                else if (!txt_search.Text.Contains(" "))
-                                {
-                                    //no spaces exist
-                                    priorSpace =0;
-                                    i = 0; // research
-                                    break;
-                                }
-                                else if (txt_search.Text.Substring(z,1)!="")
-                                {
-                                    //no spaces exist
-                                 //   priorSpace = 0;
-                                 //   i = 0; // research
-                                 //   break;
-                                }
-                            }
-                        }
-
-
-
-
-                    }
-
-
-                    if (lst_select.Items.Count>0)
-                    {
-                        
-                        //11-11-20 old method was to use the index, but that is extra steps. trying the selected item method
-                         lst_select.SelectedIndex = difIndex;
-                        lbl_debug.Text = "User Word: " + debugone + " \tBest Match: " + lst_select.SelectedItem.ToString();
-                        //     lst_select.SelectedItem = debugtwo;
-                    }
-                    
-
-
-                }
-
+                txtSuggest();
              
 
           
@@ -322,6 +320,8 @@ namespace AudioCAD1
 
         private void btn_play_Click(object sender, EventArgs e)
         {
+            tmr_progressPlayer.Enabled = true;
+            txt_progress.Text = "";
             //   rtx_stagement.Text = lst_select.Items[lst_select.SelectedIndex].ToString();
             //  SoundPlayer simpleSound = new SoundPlayer(audioLibraryLocation+"\\" + lst_select.Items[lst_select.SelectedIndex].ToString()+".wav");
             // simpleSound.Play();
@@ -335,6 +335,8 @@ namespace AudioCAD1
                     {
                     allExist = false;
                     lbl_status.Text = "Status: NOK";
+                    highlightNOK();
+                    break;
                 }
             }
 
@@ -348,7 +350,7 @@ namespace AudioCAD1
 
 
 
-
+            lst_select.Items.Clear();
 
 
 
@@ -356,7 +358,87 @@ namespace AudioCAD1
         }
 
 
+        private void highlightNOK()
+        {
+            //11-19-20
+            //pretty much a copy paste but modified in ways
+            string[] spaceSplit1 = txt_search.Text.Split(' ');
+            progress = "";
 
+
+
+
+
+            for (int i = 0; i < spaceSplit1.Length; i++)
+            {
+                progress = "";
+          
+              
+
+                    for (int z = 0; z < spaceSplit1[i].Length; z++)
+                {
+
+                    if (!File.Exists(audioLibraryLocation + "\\" + spaceSplit1[i] + ".wav"))
+                    {
+                        if (i == spaceSplit1.Length - 1)
+                        {
+                            if (z != spaceSplit1[i].Length - 1)//for the last char in array, do nothing. while for everything else do everything
+                            {
+                                progress = progress + errorBar;
+                            }
+                        }
+                        else
+                        {
+                            progress = progress + errorBar;
+                        }
+                    }
+                    else
+                    {
+                        if (i == spaceSplit1.Length - 1)
+                        {
+                            if (z != spaceSplit1[i].Length - 1)//for the last char in array, do nothing. while for everything else do everything
+                            {
+                                progress = progress + progBar;
+                            }
+                        }
+                        else
+                        {
+                            progress = progress + progBar;
+                        }
+                    }
+
+
+                 
+
+                }
+
+
+
+                    if (i==spaceSplit1.Length-1) //11-19-20 hope this works first try- confirmed-this part makes sure the error/normal text are highlighted properly ok.
+                {
+                    if (!File.Exists(audioLibraryLocation + "\\" + spaceSplit1[i] + ".wav"))
+                    {
+                        txt_progress.Text = txt_progress.Text + progress + errorBar;
+                    }
+                    else
+                    {
+                        txt_progress.Text = txt_progress.Text + progress + progBar;
+                    }
+               }
+                    else
+                {
+                    txt_progress.Text = txt_progress.Text + progress + progBar;
+                }
+
+              
+
+             
+            }
+
+            progress = "";
+
+
+        }
  
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -366,15 +448,71 @@ namespace AudioCAD1
 
         private void txt_search_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode==Keys.Space)
+            int cursorPos = txt_search.SelectionStart;
+            if (e.KeyCode==Keys.Space || e.KeyCode==Keys.Enter)
             {
 
                 if ( lst_select.Items.Count>0)
                 {
-                  //  lst_select.SelectedIndex = 0;
+
+                
+
+                    string[] curWords = txt_search.Text.Split(' ');
+                    int ba = txt_search.SelectionStart - 1;
+                    int whereAreWe = 0;
+                    for (int pu = 0; pu < txt_search.Text.Length; pu++)
+                    {
+
+                        if (txt_search.Text.Substring(pu, 1) == " ")
+                        {
+                            whereAreWe++;
+                        }
+                        if (pu == ba)
+                        {
+                            //the array position is in the var above
+                            break;
+                        }
+                    }
+                    int curPose =txt_search.SelectionStart;
+                    if (ba < 0)
+                    {
+                        whereAreWe = 0;
+                    }
+
+                    curWords[whereAreWe]= lst_select.Items[lst_select.SelectedIndex].ToString();
+
+                    //reconstruct the text box with complete words
+                    int cursepos = 0;
+                    int finalcursepos = 0;
+                    txt_search.Text = null;
+                    for (int i=0;i<curWords.Length;i++)
+                    {
+                        cursepos = cursepos + curWords[i].Length+1; //add one space (1) and the total words (THE LENGTH)
+                        txt_search.Text = txt_search.Text  + curWords[i]+ " ";
+                        if (i==whereAreWe)
+                        {
+                            finalcursepos = cursepos;
+                            txt_search.SelectionStart = txt_search.Text.Length;
+                        }
+                    }
 
 
+                    //11-18-20 something new everyday
+                    //https://stackoverflow.com/questions/206717/how-do-i-replace-multiple-spaces-with-a-single-space-in-c?noredirect=1&lq=1
+             
+                    RegexOptions options = RegexOptions.None;
+                    Regex regex = new Regex("[ ]{2,}", options);
+                    txt_search.Text = regex.Replace(txt_search.Text, " ");
+                    txt_search.SelectionStart = finalcursepos;
 
+                if (e.KeyCode==Keys.Space)
+                    {
+                        //remove the last char
+                        txt_search.Text=txt_search.Text.Remove(txt_search.Text.Length-1);
+                        txt_search.SelectionStart = finalcursepos;
+                    }
+                    lst_select.Items.Clear();
+                    /*
                     string[] breaker = txt_search.Text.Split(' ');
                     string recon = null;
                     for (int i = 0; i < breaker.Length - 1; i++)
@@ -383,23 +521,60 @@ namespace AudioCAD1
                     }
                     txt_search.Text = recon + lst_select.Items[lst_select.SelectedIndex].ToString();
                     txt_search.SelectionStart = txt_search.Text.Length;
+                    */
                 }
              
+            }
+            else if (e.KeyCode==Keys.Up)
+            {
+                if (txt_search.SelectionStart>0 )
+                {
+                    txt_search.SelectionStart = cursorPos + 1;
+                    if (lst_select.SelectedIndex > 0)
+                    {
+                        lst_select.SelectedIndex = lst_select.SelectedIndex - 1;
+                    }
+                  
+
+                }
+             
+            }
+            else if (e.KeyCode==Keys.Down)
+            {
+                if (txt_search.SelectionStart > 0)
+                {
+                    txt_search.SelectionStart = cursorPos - 1;
+                    if (lst_select.SelectedIndex < lst_select.Items.Count - 1)
+                    {
+                        lst_select.SelectedIndex = lst_select.SelectedIndex + 1;
+                    }
+                 
+                }
             }
             else
             {
                 lst_select.ClearSelected();
+                if (txt_search.Text != "")
+                {
+                     txtSuggest();
+                }
+                else
+                {
+                    lst_select.Items.Clear();
+                }
+
+
             }
         }
-      
 
 
+        string progress = "";
         private void worker_DoWork_1(object sender, DoWorkEventArgs e)
         {
           
                // txt_search.Text = txt_search.Text.Trim();
             string[] spaceSplit1 = txt_search.Text.Split(' ');
-            string progress = "";
+             progress = "";
            
            
            
@@ -411,11 +586,22 @@ namespace AudioCAD1
                 loadSoundAsync(audioLibraryLocation + "\\" + spaceSplit1[i] + ".wav"); //lst_select.Items[lst_select.SelectedIndex].ToString() 
                 for (int z=0;z<spaceSplit1[i].Length;z++)
                 {
-                    progress = progress + ".";
+                    if (i==spaceSplit1.Length-1)
+                    {
+                        if ( z!= spaceSplit1[i].Length-1)//for the last char in array, do nothing. while for everything else do everything
+                        {
+                            progress = progress + progBar;
+                        }
+                    }
+                    else
+                    {
+                        progress = progress + progBar;
+                    }
+                    
                 }
-              
-                 
-              
+
+
+
              
                 this.Player.PlaySync();
             }
@@ -435,7 +621,44 @@ namespace AudioCAD1
         private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             btn_play.Enabled = true;
-          
+            tmr_progressPlayer.Enabled = false;
+            txt_progress.Text = "";
+            txt_search.Focus();
+        }
+
+        private void lst_select_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lst_select_DoubleClick(object sender, EventArgs e)
+        {
+
+            string[] breaker = txt_search.Text.Split(' ');
+            string recon = null;
+            for (int i = 0; i < breaker.Length - 1; i++)
+            {
+                recon = recon + breaker[i] + " ";
+            }
+            txt_search.Text = recon + lst_select.Items[lst_select.SelectedIndex].ToString();
+            txt_search.SelectionStart = txt_search.Text.Length;
+            txt_search.Select();
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void tmr_progressPlayer_Tick(object sender, EventArgs e)
+        {
+            if (progress!="")
+            {
+                txt_progress.Text = txt_progress.Text + progress + progBar;
+                txt_search.Focus();
+                progress = "";
+            }
+
         }
     }
 }
