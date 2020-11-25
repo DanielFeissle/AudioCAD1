@@ -50,7 +50,7 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.txt_search = new System.Windows.Forms.TextBox();
             this.lbl_search = new System.Windows.Forms.Label();
-            this.rtx_term_search = new System.Windows.Forms.RichTextBox();
+            this.rtx_history = new System.Windows.Forms.RichTextBox();
             this.lst_select = new System.Windows.Forms.ListBox();
             this.btn_play = new System.Windows.Forms.Button();
             this.lbl_stringDiff = new System.Windows.Forms.Label();
@@ -59,6 +59,7 @@
             this.lbl_status = new System.Windows.Forms.Label();
             this.tmr_progressPlayer = new System.Windows.Forms.Timer(this.components);
             this.txt_progress = new System.Windows.Forms.TextBox();
+            this.lbl_runHist = new System.Windows.Forms.Label();
             this.mnu_main.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -93,47 +94,48 @@
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(252, 30);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(147, 30);
             this.newToolStripMenuItem.Text = "New";
+            this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(249, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(144, 6);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(252, 30);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(147, 30);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(252, 30);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(147, 30);
             this.saveToolStripMenuItem.Text = "Save";
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(249, 6);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(144, 6);
             // 
             // exportToolStripMenuItem
             // 
             this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(252, 30);
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(147, 30);
             this.exportToolStripMenuItem.Text = "Export";
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(249, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(144, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(252, 30);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(147, 30);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -185,6 +187,7 @@
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(146, 30);
             this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // dlg_audioLibrary
             // 
@@ -195,7 +198,7 @@
             this.txt_search.Font = new System.Drawing.Font("Consolas", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txt_search.Location = new System.Drawing.Point(12, 544);
             this.txt_search.Name = "txt_search";
-            this.txt_search.Size = new System.Drawing.Size(1234, 26);
+            this.txt_search.Size = new System.Drawing.Size(1129, 26);
             this.txt_search.TabIndex = 1;
             this.txt_search.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             this.txt_search.Enter += new System.EventHandler(this.txt_search_Enter);
@@ -211,13 +214,16 @@
             this.lbl_search.TabIndex = 2;
             this.lbl_search.Text = "Active search start:";
             // 
-            // rtx_term_search
+            // rtx_history
             // 
-            this.rtx_term_search.Location = new System.Drawing.Point(12, 626);
-            this.rtx_term_search.Name = "rtx_term_search";
-            this.rtx_term_search.Size = new System.Drawing.Size(1234, 182);
-            this.rtx_term_search.TabIndex = 3;
-            this.rtx_term_search.Text = "";
+            this.rtx_history.DetectUrls = false;
+            this.rtx_history.Location = new System.Drawing.Point(12, 78);
+            this.rtx_history.Name = "rtx_history";
+            this.rtx_history.ReadOnly = true;
+            this.rtx_history.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
+            this.rtx_history.Size = new System.Drawing.Size(1234, 444);
+            this.rtx_history.TabIndex = 3;
+            this.rtx_history.Text = "";
             // 
             // lst_select
             // 
@@ -228,12 +234,13 @@
             this.lst_select.Name = "lst_select";
             this.lst_select.Size = new System.Drawing.Size(1234, 289);
             this.lst_select.TabIndex = 5;
+            this.lst_select.DoubleClick += new System.EventHandler(this.lst_select_DoubleClick_1);
             // 
             // btn_play
             // 
-            this.btn_play.Location = new System.Drawing.Point(849, 288);
+            this.btn_play.Location = new System.Drawing.Point(1147, 544);
             this.btn_play.Name = "btn_play";
-            this.btn_play.Size = new System.Drawing.Size(116, 44);
+            this.btn_play.Size = new System.Drawing.Size(99, 58);
             this.btn_play.TabIndex = 6;
             this.btn_play.Text = "Play";
             this.btn_play.UseVisualStyleBackColor = true;
@@ -284,21 +291,31 @@
             this.txt_progress.Font = new System.Drawing.Font("Consolas", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txt_progress.Location = new System.Drawing.Point(12, 576);
             this.txt_progress.Name = "txt_progress";
-            this.txt_progress.Size = new System.Drawing.Size(1234, 26);
+            this.txt_progress.Size = new System.Drawing.Size(1129, 26);
             this.txt_progress.TabIndex = 10;
+            // 
+            // lbl_runHist
+            // 
+            this.lbl_runHist.AutoSize = true;
+            this.lbl_runHist.Location = new System.Drawing.Point(12, 55);
+            this.lbl_runHist.Name = "lbl_runHist";
+            this.lbl_runHist.Size = new System.Drawing.Size(92, 20);
+            this.lbl_runHist.TabIndex = 11;
+            this.lbl_runHist.Text = "Run History";
             // 
             // frm_main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1258, 968);
+            this.Controls.Add(this.lbl_runHist);
             this.Controls.Add(this.txt_progress);
             this.Controls.Add(this.lbl_status);
             this.Controls.Add(this.lbl_debug);
             this.Controls.Add(this.lbl_stringDiff);
             this.Controls.Add(this.btn_play);
             this.Controls.Add(this.lst_select);
-            this.Controls.Add(this.rtx_term_search);
+            this.Controls.Add(this.rtx_history);
             this.Controls.Add(this.lbl_search);
             this.Controls.Add(this.txt_search);
             this.Controls.Add(this.mnu_main);
@@ -322,7 +339,7 @@
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.TextBox txt_search;
         private System.Windows.Forms.Label lbl_search;
-        private System.Windows.Forms.RichTextBox rtx_term_search;
+        private System.Windows.Forms.RichTextBox rtx_history;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
@@ -347,6 +364,7 @@
         private System.Windows.Forms.Label lbl_status;
         private System.Windows.Forms.Timer tmr_progressPlayer;
         private System.Windows.Forms.TextBox txt_progress;
+        private System.Windows.Forms.Label lbl_runHist;
     }
 }
 

@@ -15,13 +15,13 @@ namespace AudioCAD1
 {
     public partial class frm_main : Form
     {
-        const string progBar = "*";
-        const string errorBar = "E";
+         string progBar = "*";
+         string errorBar = "E";
         string audioLibraryLocation = "";
 
         string []sf_Name = null;
-
-
+        int totUse = 0;
+        private abt_help aboutWindow;
 
 
 
@@ -32,6 +32,9 @@ namespace AudioCAD1
 
         private void frm_main_Load(object sender, EventArgs e)
         {
+            //11-23-20
+            //extra windows/forms go here at the start
+            aboutWindow = new abt_help();
             lbl_debug.Text = "User Word: " + debugone +" \tBest Match: " + debugtwo;
 
             if (Directory.Exists(Environment.CurrentDirectory + "\\data"))
@@ -58,18 +61,39 @@ namespace AudioCAD1
                 }
                 else
                 {
-                    using (var tw = new StreamWriter(Environment.CurrentDirectory+"\\data\\master\\settings.conf", true))
-                    {
-                        tw.WriteLine(Environment.CurrentDirectory+ "\\data\\audio\\MaxxSteele");
-                    }
+                    rewriteBadFile();
                 }
 
             }
 
             string[] Settings = File.ReadAllLines(Environment.CurrentDirectory + "\\data\\master\\settings.conf");
             //settings 0 is the audio directory
-            audioLibraryLocation = Settings[0];
+            try
+            {
+                for (int i=0;i<Settings.Length;i++)
+                {
+                    if (Settings[i]==null || Settings[i]=="")
+                    {
+                        File.Copy(Environment.CurrentDirectory + "\\data\\master\\settings.conf", Environment.CurrentDirectory + "\\data\\master\\settings" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".conf");
+                        File.Delete(Environment.CurrentDirectory + "\\data\\master\\settings.conf");
+                        rewriteBadFile();
+                        MessageBox.Show("Bad master file detected, using default values. " + Environment.NewLine + "More random info: Caught in a loop of nullness. Master file reset" );
+                        break;
+                    }
+                }
+                audioLibraryLocation = Settings[0];
+                errorBar = Settings[1];
+                progBar = Settings[2];
+            }
+            catch (Exception ex)
+            {
 
+                File.Copy(Environment.CurrentDirectory + "\\data\\master\\settings.conf", Environment.CurrentDirectory + "\\data\\master\\settings" + DateTime.Now.ToString("yyyyMMddHHmmssfff")+ ".conf");
+                File.Delete(Environment.CurrentDirectory + "\\data\\master\\settings.conf");
+                rewriteBadFile();
+                MessageBox.Show("Bad master file detected, using default values. "+Environment.NewLine+"More random info:" +Environment.NewLine+ ex.ToString());
+            }
+          
             var allFiles = Directory.GetFiles(Settings[0], "*.wav", SearchOption.AllDirectories);
             sf_Name = allFiles;
            if (allFiles.Length==0)
@@ -85,9 +109,28 @@ namespace AudioCAD1
 
 
         }
+ 
+
+        private void rewriteBadFile()
+        {
+           
+            using (var tw = new StreamWriter(Environment.CurrentDirectory + "\\data\\master\\settings.conf", true))
+            {
+                
+                tw.WriteLine(Environment.CurrentDirectory + "\\data\\audio\\MaxxSteele");
+                tw.WriteLine("E");
+                tw.WriteLine("*");
 
 
 
+            }
+
+            //11-24-20 the files are ok
+            string[] Settings = File.ReadAllLines(Environment.CurrentDirectory + "\\data\\master\\settings.conf");
+            audioLibraryLocation = Settings[0];
+            errorBar = Settings[1];
+            progBar = Settings[2];
+        }
 
         private void txtSuggest()
         {
@@ -274,7 +317,7 @@ namespace AudioCAD1
 
         private void txt_search_Enter(object sender, EventArgs e)
         {
-            rtx_term_search.Text = "";
+        
         }
 
         private void clearToolStripMenuItem_Click(object sender, EventArgs e)
@@ -342,9 +385,13 @@ namespace AudioCAD1
 
             if (allExist==true)
             {
+                totUse++;
                 worker.RunWorkerAsync();
                 btn_play.Enabled = false;
                 lbl_status.Text = "Status: OK";
+                rtx_history.Text = rtx_history.Text + totUse +": "+ txt_search.Text + Environment.NewLine;
+                rtx_history.SelectionStart = rtx_history.Text.Length;
+                rtx_history.ScrollToCaret();
             }
             txt_search.SelectionStart = txt_search.Text.Length;
 
@@ -445,6 +492,9 @@ namespace AudioCAD1
         {
 
         }
+
+
+
 
         private void txt_search_KeyDown(object sender, KeyEventArgs e)
         {
@@ -657,6 +707,102 @@ namespace AudioCAD1
                 txt_progress.Text = txt_progress.Text + progress + progBar;
                 txt_search.Focus();
                 progress = "";
+            }
+
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Restart();
+            Environment.Exit(0);
+        }
+  
+
+       
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+          
+
+            if (!aboutWindow.Visible)
+            {
+                aboutWindow = new abt_help();
+                // Add the message
+                aboutWindow.Show();
+            }
+            else
+            {
+                // Top
+                aboutWindow.BringToFront();
+            }
+ 
+        
+        }
+
+        private void lst_select_DoubleClick_1(object sender, EventArgs e)
+        {
+            int cursorPos = txt_search.SelectionStart;
+
+
+            if (lst_select.Items.Count > 0)
+            {
+
+
+
+                string[] curWords = txt_search.Text.Split(' ');
+                int ba = txt_search.SelectionStart - 1;
+                int whereAreWe = 0;
+                for (int pu = 0; pu < txt_search.Text.Length; pu++)
+                {
+
+                    if (txt_search.Text.Substring(pu, 1) == " ")
+                    {
+                        whereAreWe++;
+                    }
+                    if (pu == ba)
+                    {
+                        //the array position is in the var above
+                        break;
+                    }
+                }
+                int curPose = txt_search.SelectionStart;
+                if (ba < 0)
+                {
+                    whereAreWe = 0;
+                }
+
+                curWords[whereAreWe] = lst_select.Items[lst_select.SelectedIndex].ToString();
+
+                //reconstruct the text box with complete words
+                int cursepos = 0;
+                int finalcursepos = 0;
+                txt_search.Text = null;
+                for (int i = 0; i < curWords.Length; i++)
+                {
+                    cursepos = cursepos + curWords[i].Length + 1; //add one space (1) and the total words (THE LENGTH)
+                    txt_search.Text = txt_search.Text + curWords[i] + " ";
+                    if (i == whereAreWe)
+                    {
+                        finalcursepos = cursepos;
+                        txt_search.SelectionStart = txt_search.Text.Length;
+                    }
+                }
+
+
+                //11-18-20 something new everyday
+                //https://stackoverflow.com/questions/206717/how-do-i-replace-multiple-spaces-with-a-single-space-in-c?noredirect=1&lq=1
+
+                RegexOptions options = RegexOptions.None;
+                Regex regex = new Regex("[ ]{2,}", options);
+                txt_search.Text = regex.Replace(txt_search.Text, " ");
+                txt_search.SelectionStart = finalcursepos;
+
+           
+                    //remove the last char
+                    txt_search.Text = txt_search.Text.Remove(txt_search.Text.Length - 1);
+                    txt_search.SelectionStart = finalcursepos;
+               
+                lst_select.Items.Clear();
+ 
             }
 
         }
