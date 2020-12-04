@@ -1,0 +1,10 @@
+C:\Users\dfeis\source\repos\AudioCAD1\AudioCAD1\bin\Debug\AudioCAD1.exe
+C:\Users\dfeis\source\repos\AudioCAD1\AudioCAD1\bin\Debug\AudioCAD1.pdb
+C:\Users\dfeis\source\repos\AudioCAD1\AudioCAD1\obj\Debug\AudioCAD1.csprojAssemblyReference.cache
+C:\Users\dfeis\source\repos\AudioCAD1\AudioCAD1\obj\Debug\AudioCAD1.frm_main.resources
+C:\Users\dfeis\source\repos\AudioCAD1\AudioCAD1\obj\Debug\AudioCAD1.Properties.Resources.resources
+C:\Users\dfeis\source\repos\AudioCAD1\AudioCAD1\obj\Debug\AudioCAD1.csproj.GenerateResource.cache
+C:\Users\dfeis\source\repos\AudioCAD1\AudioCAD1\obj\Debug\AudioCAD1.csproj.CoreCompileInputs.cache
+C:\Users\dfeis\source\repos\AudioCAD1\AudioCAD1\obj\Debug\AudioCAD1.exe
+C:\Users\dfeis\source\repos\AudioCAD1\AudioCAD1\obj\Debug\AudioCAD1.pdb
+C:\Users\dfeis\source\repos\AudioCAD1\AudioCAD1\obj\Debug\AudioCAD1.abt_help.resources
