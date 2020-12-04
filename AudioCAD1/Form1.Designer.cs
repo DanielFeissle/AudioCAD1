@@ -33,8 +33,8 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
-            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btn_openSentence = new System.Windows.Forms.ToolStripMenuItem();
+            this.btn_save_sentence = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
@@ -43,11 +43,14 @@
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
             this.resetMasterConfToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btn_Despacer = new System.Windows.Forms.ToolStripMenuItem();
+            this.btn_standaloneAudio = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dlg_audioLibrary = new System.Windows.Forms.OpenFileDialog();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.dlg_TextSave = new System.Windows.Forms.SaveFileDialog();
             this.txt_search = new System.Windows.Forms.TextBox();
             this.lbl_search = new System.Windows.Forms.Label();
             this.rtx_history = new System.Windows.Forms.RichTextBox();
@@ -60,6 +63,8 @@
             this.tmr_progressPlayer = new System.Windows.Forms.Timer(this.components);
             this.txt_progress = new System.Windows.Forms.TextBox();
             this.lbl_runHist = new System.Windows.Forms.Label();
+            this.dlg_TextOpen = new System.Windows.Forms.OpenFileDialog();
+            this.dlg_ExportProc = new System.Windows.Forms.SaveFileDialog();
             this.mnu_main.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -75,14 +80,15 @@
             this.mnu_main.Size = new System.Drawing.Size(1258, 33);
             this.mnu_main.TabIndex = 0;
             this.mnu_main.Text = "menuStrip1";
+            this.mnu_main.Enter += new System.EventHandler(this.mnu_main_Enter);
             // 
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripMenuItem,
             this.toolStripMenuItem2,
-            this.openToolStripMenuItem,
-            this.saveToolStripMenuItem,
+            this.btn_openSentence,
+            this.btn_save_sentence,
             this.toolStripMenuItem3,
             this.exportToolStripMenuItem,
             this.toolStripMenuItem1,
@@ -103,18 +109,19 @@
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
             this.toolStripMenuItem2.Size = new System.Drawing.Size(144, 6);
             // 
-            // openToolStripMenuItem
+            // btn_openSentence
             // 
-            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(147, 30);
-            this.openToolStripMenuItem.Text = "Open";
-            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            this.btn_openSentence.Name = "btn_openSentence";
+            this.btn_openSentence.Size = new System.Drawing.Size(147, 30);
+            this.btn_openSentence.Text = "Open";
+            this.btn_openSentence.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
-            // saveToolStripMenuItem
+            // btn_save_sentence
             // 
-            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(147, 30);
-            this.saveToolStripMenuItem.Text = "Save";
+            this.btn_save_sentence.Name = "btn_save_sentence";
+            this.btn_save_sentence.Size = new System.Drawing.Size(147, 30);
+            this.btn_save_sentence.Text = "Save";
+            this.btn_save_sentence.Click += new System.EventHandler(this.btn_save_sentence_Click);
             // 
             // toolStripMenuItem3
             // 
@@ -126,6 +133,7 @@
             this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
             this.exportToolStripMenuItem.Size = new System.Drawing.Size(147, 30);
             this.exportToolStripMenuItem.Text = "Export";
+            this.exportToolStripMenuItem.Click += new System.EventHandler(this.exportToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
@@ -144,7 +152,8 @@
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.clearToolStripMenuItem,
             this.toolStripMenuItem4,
-            this.resetMasterConfToolStripMenuItem});
+            this.resetMasterConfToolStripMenuItem,
+            this.pluginsToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(54, 29);
             this.editToolStripMenuItem.Text = "Edit";
@@ -166,6 +175,30 @@
             this.resetMasterConfToolStripMenuItem.Name = "resetMasterConfToolStripMenuItem";
             this.resetMasterConfToolStripMenuItem.Size = new System.Drawing.Size(237, 30);
             this.resetMasterConfToolStripMenuItem.Text = "Reset master conf";
+            this.resetMasterConfToolStripMenuItem.Click += new System.EventHandler(this.resetMasterConfToolStripMenuItem_Click);
+            // 
+            // pluginsToolStripMenuItem
+            // 
+            this.pluginsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btn_Despacer,
+            this.btn_standaloneAudio});
+            this.pluginsToolStripMenuItem.Name = "pluginsToolStripMenuItem";
+            this.pluginsToolStripMenuItem.Size = new System.Drawing.Size(237, 30);
+            this.pluginsToolStripMenuItem.Text = "Plugins";
+            // 
+            // btn_Despacer
+            // 
+            this.btn_Despacer.Name = "btn_Despacer";
+            this.btn_Despacer.Size = new System.Drawing.Size(286, 30);
+            this.btn_Despacer.Text = "DeSpacer";
+            this.btn_Despacer.Click += new System.EventHandler(this.deSpacerToolStripMenuItem_Click);
+            // 
+            // btn_standaloneAudio
+            // 
+            this.btn_standaloneAudio.Name = "btn_standaloneAudio";
+            this.btn_standaloneAudio.Size = new System.Drawing.Size(286, 30);
+            this.btn_standaloneAudio.Text = "Standalone_AudioPlayer";
+            this.btn_standaloneAudio.Click += new System.EventHandler(this.audioPlayerToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -193,6 +226,10 @@
             // 
             this.dlg_audioLibrary.FileName = "openFileDialog1";
             // 
+            // dlg_TextSave
+            // 
+            this.dlg_TextSave.Filter = "Text files|*.txt|All files|*.*";
+            // 
             // txt_search
             // 
             this.txt_search.Font = new System.Drawing.Font("Consolas", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -203,6 +240,7 @@
             this.txt_search.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             this.txt_search.Enter += new System.EventHandler(this.txt_search_Enter);
             this.txt_search.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txt_search_KeyDown);
+            this.txt_search.Leave += new System.EventHandler(this.txt_search_Leave);
             // 
             // lbl_search
             // 
@@ -303,6 +341,15 @@
             this.lbl_runHist.TabIndex = 11;
             this.lbl_runHist.Text = "Run History";
             // 
+            // dlg_TextOpen
+            // 
+            this.dlg_TextOpen.Filter = "Text files|*.txt|All files|*.*";
+            // 
+            // dlg_ExportProc
+            // 
+            this.dlg_ExportProc.Filter = "VBS files|*.vbs|All files|*.*";
+            this.dlg_ExportProc.Title = "Export As...";
+            // 
             // frm_main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -336,7 +383,7 @@
 
         private System.Windows.Forms.MenuStrip mnu_main;
         private System.Windows.Forms.OpenFileDialog dlg_audioLibrary;
-        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.SaveFileDialog dlg_TextSave;
         private System.Windows.Forms.TextBox txt_search;
         private System.Windows.Forms.Label lbl_search;
         private System.Windows.Forms.RichTextBox rtx_history;
@@ -345,8 +392,8 @@
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
-        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem btn_openSentence;
+        private System.Windows.Forms.ToolStripMenuItem btn_save_sentence;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
@@ -365,6 +412,11 @@
         private System.Windows.Forms.Timer tmr_progressPlayer;
         private System.Windows.Forms.TextBox txt_progress;
         private System.Windows.Forms.Label lbl_runHist;
+        private System.Windows.Forms.ToolStripMenuItem pluginsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem btn_standaloneAudio;
+        private System.Windows.Forms.ToolStripMenuItem btn_Despacer;
+        private System.Windows.Forms.OpenFileDialog dlg_TextOpen;
+        private System.Windows.Forms.SaveFileDialog dlg_ExportProc;
     }
 }
 

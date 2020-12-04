@@ -10,6 +10,7 @@ using System.Threading;
 using System.Collections;
 using System.Media;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace AudioCAD1
 {
@@ -18,7 +19,7 @@ namespace AudioCAD1
          string progBar = "*";
          string errorBar = "E";
         string audioLibraryLocation = "";
-
+        string []audioName;
         string []sf_Name = null;
         int totUse = 0;
         private abt_help aboutWindow;
@@ -32,11 +33,12 @@ namespace AudioCAD1
 
         private void frm_main_Load(object sender, EventArgs e)
         {
+
             //11-23-20
             //extra windows/forms go here at the start
             aboutWindow = new abt_help();
             lbl_debug.Text = "User Word: " + debugone +" \tBest Match: " + debugtwo;
-
+          
             if (Directory.Exists(Environment.CurrentDirectory + "\\data"))
             {
 
@@ -50,7 +52,23 @@ namespace AudioCAD1
                 Directory.CreateDirectory(Environment.CurrentDirectory + "\\data\\master");
                 Directory.CreateDirectory(Environment.CurrentDirectory + "\\data\\audio");
             }
+            if (! Directory.Exists(Environment.CurrentDirectory + "\\data\\userland"))
+            {
+                Directory.CreateDirectory(Environment.CurrentDirectory + "\\data\\userland");
+            }
 
+            if (!Directory.Exists(Environment.CurrentDirectory + "\\data\\userland\\text"))
+            {
+                Directory.CreateDirectory(Environment.CurrentDirectory + "\\data\\userland\\text");
+            }
+
+            if (!Directory.Exists(Environment.CurrentDirectory + "\\data\\userland\\final"))
+            {
+                Directory.CreateDirectory(Environment.CurrentDirectory + "\\data\\userland\\final");
+            }
+            dlg_TextOpen.InitialDirectory = Environment.CurrentDirectory + "\\data\\userland\\text";
+            dlg_TextSave.InitialDirectory = Environment.CurrentDirectory + "\\data\\userland\\text";
+            dlg_ExportProc.InitialDirectory=Environment.CurrentDirectory+ "\\data\\userland\\final";
 
             if (Directory.Exists(Environment.CurrentDirectory + "\\data\\master"))
             {
@@ -66,18 +84,24 @@ namespace AudioCAD1
 
             }
 
+            LoadAudioData();
+
+        }
+ private void LoadAudioData()
+        {
+
             string[] Settings = File.ReadAllLines(Environment.CurrentDirectory + "\\data\\master\\settings.conf");
             //settings 0 is the audio directory
             try
             {
-                for (int i=0;i<Settings.Length;i++)
+                for (int i = 0; i < Settings.Length; i++)
                 {
-                    if (Settings[i]==null || Settings[i]=="")
+                    if (Settings[i] == null || Settings[i] == "")
                     {
                         File.Copy(Environment.CurrentDirectory + "\\data\\master\\settings.conf", Environment.CurrentDirectory + "\\data\\master\\settings" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".conf");
                         File.Delete(Environment.CurrentDirectory + "\\data\\master\\settings.conf");
                         rewriteBadFile();
-                        MessageBox.Show("Bad master file detected, using default values. " + Environment.NewLine + "More random info: Caught in a loop of nullness. Master file reset" );
+                        MessageBox.Show("Bad master file detected, using default values. " + Environment.NewLine + "More random info: Caught in a loop of nullness. Master file reset");
                         break;
                     }
                 }
@@ -88,28 +112,25 @@ namespace AudioCAD1
             catch (Exception ex)
             {
 
-                File.Copy(Environment.CurrentDirectory + "\\data\\master\\settings.conf", Environment.CurrentDirectory + "\\data\\master\\settings" + DateTime.Now.ToString("yyyyMMddHHmmssfff")+ ".conf");
+                File.Copy(Environment.CurrentDirectory + "\\data\\master\\settings.conf", Environment.CurrentDirectory + "\\data\\master\\settings" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".conf");
                 File.Delete(Environment.CurrentDirectory + "\\data\\master\\settings.conf");
                 rewriteBadFile();
-                MessageBox.Show("Bad master file detected, using default values. "+Environment.NewLine+"More random info:" +Environment.NewLine+ ex.ToString());
+                MessageBox.Show("Bad master file detected, using default values. " + Environment.NewLine + "More random info:" + Environment.NewLine + ex.ToString());
             }
-          
+
             var allFiles = Directory.GetFiles(Settings[0], "*.wav", SearchOption.AllDirectories);
             sf_Name = allFiles;
-           if (allFiles.Length==0)
+            if (allFiles.Length == 0)
             {
                 txt_search.Enabled = false;
                 btn_play.Enabled = false;
             }
-           else
+            else
             {
                 txt_search.Enabled = true;
                 btn_play.Enabled = true;
             }
-
-
         }
- 
 
         private void rewriteBadFile()
         {
@@ -135,6 +156,11 @@ namespace AudioCAD1
         private void txtSuggest()
         {
             string[] curWords = txt_search.Text.Split(' ');
+
+            //11-30-20 neat
+            //https://stackoverflow.com/questions/6177219/convert-string-array-to-lowercase
+            curWords = Array.ConvertAll(curWords, d => d.ToLower());
+
             int ba = txt_search.SelectionStart-1;
             int whereAreWe = 0;
             for (int pu=0;pu<txt_search.Text.Length;pu++)
@@ -368,6 +394,8 @@ namespace AudioCAD1
             //   rtx_stagement.Text = lst_select.Items[lst_select.SelectedIndex].ToString();
             //  SoundPlayer simpleSound = new SoundPlayer(audioLibraryLocation+"\\" + lst_select.Items[lst_select.SelectedIndex].ToString()+".wav");
             // simpleSound.Play();
+            Regex trimmer = new Regex(@"\s\s+");
+            txt_search.Text = trimmer.Replace(txt_search.Text, " ");
             txt_search.Text = txt_search.Text.Trim();
             string[] spaceSplit1 = txt_search.Text.Split(' ');
             bool allExist = true;
@@ -490,7 +518,20 @@ namespace AudioCAD1
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            if (dlg_TextOpen.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    //file structure is really just the first line, so read that
+                    string[] contained = File.ReadAllLines(dlg_TextOpen.FileName);// puts each line into array
+                    txt_search.Text = contained[0];
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Read error detected." + Environment.NewLine + Environment.NewLine + ex.ToString(), "Read Error...", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+              
+            }
         }
 
 
@@ -603,15 +644,23 @@ namespace AudioCAD1
             }
             else
             {
-                lst_select.ClearSelected();
-                if (txt_search.Text != "")
+                if (e.KeyCode!=Keys.ShiftKey)
                 {
-                     txtSuggest();
+                    if (e.KeyCode!=Keys.CapsLock)
+                    {
+                        lst_select.ClearSelected();
+                        if (txt_search.Text != "")
+                        {
+                            txtSuggest();
+                        }
+                        else
+                        {
+                            lst_select.Items.Clear();
+                        }
+                    }
+                   
                 }
-                else
-                {
-                    lst_select.Items.Clear();
-                }
+
 
 
             }
@@ -805,6 +854,219 @@ namespace AudioCAD1
  
             }
 
+        }
+        int standaloneAudioChoice = 0;
+        private void audioPlayerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            standaloneAudioChoice = 0; 
+            //TODO put in a method that contains below, we can reuse this portion
+            audioName = audioLibraryLocation.Split('\\');
+            string folderName = audioName[audioName.Length-1];
+           Regex trimmer = new Regex(@"\s\s+");
+            txt_search.Text = trimmer.Replace(txt_search.Text, " ");
+
+
+            txt_search.Text = txt_search.Text.Trim();
+            string[] spaceSplit1 = txt_search.Text.Split(' ');
+            bool allExist = true;
+
+            string stateFinder = "";
+            for (int i = 0; i < spaceSplit1.Length; i++)
+            {
+                stateFinder = stateFinder + spaceSplit1[i] + ".wav ";
+                if (!File.Exists(audioLibraryLocation + "\\" + spaceSplit1[i] + ".wav"))
+                {
+                    allExist = false;
+                    lbl_status.Text = "Status: NOK";
+                    highlightNOK();
+                    break;
+                }
+
+            }
+
+            if (allExist == true)
+            {
+
+
+
+                runTimeErrors = "";
+                runTimeResults = "";
+                //12-1-20
+                //modified from https://stackoverflow.com/questions/6005083/how-to-run-a-batch-file-within-a-c-sharp-gui-form
+                using (Process p = new Process())
+                {
+                    p.StartInfo.WorkingDirectory = audioLibraryLocation;//audioLibraryLocation; ".\\data\\audio\\MaxxSteele"
+                    p.StartInfo.Arguments = folderName + " " + standaloneAudioChoice +" "+ stateFinder; //statefinder is a string that contains the .wav extension
+                    p.StartInfo.FileName = Environment.CurrentDirectory + "\\data\\master\\plugins\\AudioPlayer.bat"; //"<path to batch file itself>"; //Environment.CurrentDirectory +
+                    p.StartInfo.UseShellExecute = false;
+                    p.StartInfo.RedirectStandardOutput = true;
+                    p.StartInfo.RedirectStandardError = true;
+                    p.Start();
+                    p.WaitForExit();
+
+                    // Capture output from batch file written to stdout and put in the 
+                    // RunResults textbox
+                    string output = p.StandardOutput.ReadToEnd();
+                    if (!String.IsNullOrEmpty(output) && output.Trim() != "")
+                    {
+                        runTimeResults = output;
+                    }
+
+                    // Capture any errors written to stderr and put in the errors textbox.
+                    string errors = p.StandardError.ReadToEnd();
+                    if (!String.IsNullOrEmpty(errors) & errors.Trim() != "")
+                    {
+                        runTimeErrors = errors;
+                    }
+                }
+                rtx_history.Text = rtx_history.Text + "Output: " + runTimeResults + Environment.NewLine + Environment.NewLine + "Errors: " + runTimeErrors + Environment.NewLine;
+                rtx_history.SelectionStart = rtx_history.Text.Length;
+                rtx_history.ScrollToCaret();
+                MessageBox.Show("Output: " + runTimeResults + Environment.NewLine + Environment.NewLine + "Errors: " + runTimeErrors, "Standalone Audio Player", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+
+            }
+          
+
+
+
+            lst_select.Items.Clear();
+
+
+
+
+
+
+
+        }
+        string runTimeErrors = "";
+        string runTimeResults = "";
+        private void deSpacerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            runTimeErrors = "";
+            runTimeResults = "";
+            //12-1-20
+            //modified from https://stackoverflow.com/questions/6005083/how-to-run-a-batch-file-within-a-c-sharp-gui-form
+
+            using (Process p = new Process())
+            {
+                p.StartInfo.WorkingDirectory = audioLibraryLocation;
+                p.StartInfo.FileName = Environment.CurrentDirectory + "\\data\\master\\plugins\\DeSpacer.bat"; //"<path to batch file itself>";
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.RedirectStandardOutput = true;
+                p.StartInfo.RedirectStandardError = true;
+                p.Start();
+                p.WaitForExit();
+
+                // Capture output from batch file written to stdout and put in the 
+                // RunResults textbox
+                string output = p.StandardOutput.ReadToEnd();
+                if (!String.IsNullOrEmpty(output) && output.Trim() != "")
+                {
+                    runTimeResults = output;
+                }
+
+                // Capture any errors written to stderr and put in the errors textbox.
+                string errors = p.StandardError.ReadToEnd();
+                if (!String.IsNullOrEmpty(errors) & errors.Trim() != "")
+                {
+                    runTimeErrors = errors;
+                }
+            }
+            rtx_history.Text = rtx_history.Text + "Output: " + runTimeResults + Environment.NewLine + Environment.NewLine + "Errors: " + runTimeErrors + Environment.NewLine;
+            rtx_history.SelectionStart = rtx_history.Text.Length;
+            rtx_history.ScrollToCaret();
+            MessageBox.Show("Output: " + runTimeResults + Environment.NewLine + Environment.NewLine + "Errors: " + runTimeErrors, "Audio File despacer", MessageBoxButtons.OK,MessageBoxIcon.Information);
+            
+            LoadAudioData();
+        }
+
+        private void btn_save_sentence_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                textCleaner();
+                if (dlg_TextSave.ShowDialog() == DialogResult.OK)
+                {
+                    string[] spaceSplit1 = txt_search.Text.Split(' ');
+                    bool allExist = true;
+                    for (int i = 0; i < spaceSplit1.Length; i++)
+                    {
+
+                        if (!File.Exists(audioLibraryLocation + "\\" + spaceSplit1[i] + ".wav"))
+                        {
+                            allExist = false;
+                            lbl_status.Text = "Status: NOK";
+                            highlightNOK();
+                            break;
+                        }
+                    }
+                    if (allExist == true)
+                    {
+                        File.WriteAllText(dlg_TextSave.FileName, txt_search.Text);
+                    }
+                    else
+                    {
+                        MessageBox.Show("A word does not exist, see below for errors", "Save Error (soft error)", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to save file"+Environment.NewLine+Environment.NewLine+ex.ToString(), "Save Error (HARD error)", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+            }
+
+        }
+
+        private void exportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (dlg_ExportProc.ShowDialog() == DialogResult.OK)
+            {
+
+                standaloneAudioChoice = 1;
+
+
+
+
+
+
+
+
+            }
+        }
+
+        private void resetMasterConfToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult rewriteFile = MessageBox.Show("Recreate master conf file?", "Delete master file", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (rewriteFile==DialogResult.Yes)
+            {
+                rewriteBadFile();
+                MessageBox.Show("Master conf file recreated!","Conf rewritten");
+            }
+            else
+            {
+                MessageBox.Show("Master conf file is not changed.", "Conf confirmed");
+            }
+            
+        }
+
+        private void txt_search_Leave(object sender, EventArgs e)
+        {
+            textCleaner();
+        }
+
+        private void mnu_main_Enter(object sender, EventArgs e)
+        {
+            textCleaner();
+        }
+
+        private void textCleaner()
+        {
+            Regex trimmer = new Regex(@"\s\s+");
+            txt_search.Text = trimmer.Replace(txt_search.Text, " ");
         }
     }
 }
