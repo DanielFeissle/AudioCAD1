@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("AudioCAD1")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Use audio chunks to construct a conversation. There are two ways to play sentence data back. 1- Through the program itself. This is the fastest/straight foward option. 2- Export and let VBscript run the audio for you. Does not use this application, and everything is included in the export location.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Daniel Feissle")]
 [assembly: AssemblyProduct("AudioCAD1")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]

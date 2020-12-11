@@ -18,7 +18,7 @@ if %1% EQU 0 (
   set far=objShell.CurrentDirectory = ^".\..\..\audio\%noe%^"
 ) else (
   echo use standalone
-  set far=objShell.CurrentDirectory = ^"%noe%^"
+  set far=objShell.CurrentDirectory = ^".^"
 )
 shift
 

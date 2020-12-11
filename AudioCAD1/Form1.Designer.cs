@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frm_main));
             this.mnu_main = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -43,6 +44,8 @@
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
             this.resetMasterConfToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btn_reloadMasterConf = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
             this.pluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btn_Despacer = new System.Windows.Forms.ToolStripMenuItem();
             this.btn_standaloneAudio = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,6 +68,8 @@
             this.lbl_runHist = new System.Windows.Forms.Label();
             this.dlg_TextOpen = new System.Windows.Forms.OpenFileDialog();
             this.dlg_ExportProc = new System.Windows.Forms.SaveFileDialog();
+            this.btn_configEdit = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripSeparator();
             this.mnu_main.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -93,8 +98,9 @@
             this.exportToolStripMenuItem,
             this.toolStripMenuItem1,
             this.exitToolStripMenuItem});
+            this.fileToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("fileToolStripMenuItem.Image")));
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(50, 29);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(74, 29);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // newToolStripMenuItem
@@ -153,29 +159,46 @@
             this.clearToolStripMenuItem,
             this.toolStripMenuItem4,
             this.resetMasterConfToolStripMenuItem,
-            this.pluginsToolStripMenuItem});
+            this.btn_reloadMasterConf,
+            this.toolStripMenuItem5,
+            this.pluginsToolStripMenuItem,
+            this.toolStripMenuItem6,
+            this.btn_configEdit});
+            this.editToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("editToolStripMenuItem.Image")));
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(54, 29);
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(78, 29);
             this.editToolStripMenuItem.Text = "Edit";
             // 
             // clearToolStripMenuItem
             // 
             this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
-            this.clearToolStripMenuItem.Size = new System.Drawing.Size(237, 30);
+            this.clearToolStripMenuItem.Size = new System.Drawing.Size(252, 30);
             this.clearToolStripMenuItem.Text = "Audio Library";
             this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
             // 
             // toolStripMenuItem4
             // 
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(234, 6);
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(249, 6);
             // 
             // resetMasterConfToolStripMenuItem
             // 
             this.resetMasterConfToolStripMenuItem.Name = "resetMasterConfToolStripMenuItem";
-            this.resetMasterConfToolStripMenuItem.Size = new System.Drawing.Size(237, 30);
+            this.resetMasterConfToolStripMenuItem.Size = new System.Drawing.Size(252, 30);
             this.resetMasterConfToolStripMenuItem.Text = "Reset master conf";
             this.resetMasterConfToolStripMenuItem.Click += new System.EventHandler(this.resetMasterConfToolStripMenuItem_Click);
+            // 
+            // btn_reloadMasterConf
+            // 
+            this.btn_reloadMasterConf.Name = "btn_reloadMasterConf";
+            this.btn_reloadMasterConf.Size = new System.Drawing.Size(252, 30);
+            this.btn_reloadMasterConf.Text = "Reload master conf";
+            this.btn_reloadMasterConf.Click += new System.EventHandler(this.btn_reloadMasterConf_Click);
+            // 
+            // toolStripMenuItem5
+            // 
+            this.toolStripMenuItem5.Name = "toolStripMenuItem5";
+            this.toolStripMenuItem5.Size = new System.Drawing.Size(249, 6);
             // 
             // pluginsToolStripMenuItem
             // 
@@ -183,7 +206,7 @@
             this.btn_Despacer,
             this.btn_standaloneAudio});
             this.pluginsToolStripMenuItem.Name = "pluginsToolStripMenuItem";
-            this.pluginsToolStripMenuItem.Size = new System.Drawing.Size(237, 30);
+            this.pluginsToolStripMenuItem.Size = new System.Drawing.Size(252, 30);
             this.pluginsToolStripMenuItem.Text = "Plugins";
             // 
             // btn_Despacer
@@ -205,15 +228,17 @@
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.helpToolStripMenuItem1,
             this.aboutToolStripMenuItem});
+            this.helpToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("helpToolStripMenuItem.Image")));
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(61, 29);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(85, 29);
             this.helpToolStripMenuItem.Text = "Help";
             // 
             // helpToolStripMenuItem1
             // 
             this.helpToolStripMenuItem1.Name = "helpToolStripMenuItem1";
-            this.helpToolStripMenuItem1.Size = new System.Drawing.Size(146, 30);
+            this.helpToolStripMenuItem1.Size = new System.Drawing.Size(252, 30);
             this.helpToolStripMenuItem1.Text = "Help";
+            this.helpToolStripMenuItem1.Click += new System.EventHandler(this.helpToolStripMenuItem1_Click);
             // 
             // aboutToolStripMenuItem
             // 
@@ -350,6 +375,18 @@
             this.dlg_ExportProc.Filter = "VBS files|*.vbs|All files|*.*";
             this.dlg_ExportProc.Title = "Export As...";
             // 
+            // btn_configEdit
+            // 
+            this.btn_configEdit.Name = "btn_configEdit";
+            this.btn_configEdit.Size = new System.Drawing.Size(252, 30);
+            this.btn_configEdit.Text = "Settings";
+            this.btn_configEdit.Click += new System.EventHandler(this.btn_configEdit_Click);
+            // 
+            // toolStripMenuItem6
+            // 
+            this.toolStripMenuItem6.Name = "toolStripMenuItem6";
+            this.toolStripMenuItem6.Size = new System.Drawing.Size(249, 6);
+            // 
             // frm_main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -367,6 +404,7 @@
             this.Controls.Add(this.txt_search);
             this.Controls.Add(this.mnu_main);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.mnu_main;
             this.MaximizeBox = false;
             this.Name = "frm_main";
@@ -417,6 +455,10 @@
         private System.Windows.Forms.ToolStripMenuItem btn_Despacer;
         private System.Windows.Forms.OpenFileDialog dlg_TextOpen;
         private System.Windows.Forms.SaveFileDialog dlg_ExportProc;
+        private System.Windows.Forms.ToolStripMenuItem btn_reloadMasterConf;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem5;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem6;
+        private System.Windows.Forms.ToolStripMenuItem btn_configEdit;
     }
 }
 
